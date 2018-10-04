@@ -1,9 +1,9 @@
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 #include <iostream>
 #include <glm/glm/glm.hpp>
 #include <glm/glm/gtc/type_ptr.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
 
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -15,6 +15,7 @@ static GLuint shaderProgram1;
 static glm::mat4 mM;
 static glm::mat4 mV;
 static glm::mat4 mP;
+static bool perspective;
 
 // Vertex Shader (for convenience, it is defined in the main here, but we will be using text files for shaders in future)
 // Note: Input to this shader is the vertex positions that we specified for the triangle. 
@@ -32,7 +33,7 @@ uniform mat4 mV; // The matrix for the pose of the camera					\n\
 uniform mat4 mP; // The projection matrix (perspective)                        \n\
 void main()                                                                     \n\
 {                                                                                \n\
-    gl_Position = mM * mV * mP * vec4(vPosition.x, vPosition.y, vPosition.z, 1.0);  \n\
+    gl_Position = mP * mV * mM * vec4(vPosition.x, vPosition.y, vPosition.z, 1.0);  \n\
 	color = vColor;							\n\
 }";
 
@@ -174,12 +175,44 @@ void linkCurrentBuffertoShader(GLuint shaderProgramID){
 void keyboardHandler(unsigned char key, int x, int y) {
 	switch (key)
 	{
-	case '+':
-
+	case '/':
+		if (perspective) {
+			mP = glm::mat4(1.0f);
+		}
+		else {
+			mP = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+		}
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mP"), 1, GL_FALSE, glm::value_ptr(mP));
+		perspective = !perspective;
+		break;
+	case '1':
+		mM = glm::translate(mM, glm::vec3(0.1f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case '2':
+		mM = glm::translate(mM, glm::vec3(-0.1f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case '3':
+		mM = glm::translate(mM, glm::vec3(0.0f, 0.1f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case '4':
+		mM = glm::translate(mM, glm::vec3(0.0f, -0.1f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case '5':
+		mM = glm::translate(mM, glm::vec3(0.0f, 0.0f, 0.1f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case '6':
+		mM = glm::translate(mM, glm::vec3(0.0f, 0.0f, -0.1f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
 		break;
 	default:
 		break;
 	}
+	glutPostRedisplay();
 }
 
 void display(){
@@ -201,7 +234,7 @@ void init()
 	mM = glm::mat4(1.0f);
 	mV = glm::mat4(1.0f);
 	mP = glm::mat4(1.0f);
-
+	perspective = false;
 	// Create 3 vertices that make up a triangle that fits on the viewport 
 	GLfloat vertices1[] = { -1.0f, -1.0f, 0.0f,
 			0.0f, -1.0f, 0.0f,
@@ -239,7 +272,7 @@ int main(int argc, char** argv){
 
 	// Set up the window
 	glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 600);
     glutCreateWindow("Hello Triangle");
 	// Tell glut where the display function is
