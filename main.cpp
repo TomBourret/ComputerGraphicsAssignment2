@@ -3,6 +3,7 @@
 #include <GL/freeglut.h>
 #include <iostream>
 #include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 // Macro for indexing vertex buffer
 #define BUFFER_OFFSET(i) ((char *)NULL + (i))
@@ -11,6 +12,9 @@ using namespace std;
 
 static GLuint VAOs[2];
 static GLuint shaderProgram1;
+static glm::mat4 mM;
+static glm::mat4 mV;
+static glm::mat4 mP;
 
 // Vertex Shader (for convenience, it is defined in the main here, but we will be using text files for shaders in future)
 // Note: Input to this shader is the vertex positions that we specified for the triangle. 
@@ -28,7 +32,7 @@ uniform mat4 mV; // The matrix for the pose of the camera					\n\
 uniform mat4 mP; // The projection matrix (perspective)                        \n\
 void main()                                                                     \n\
 {                                                                                \n\
-    gl_Position = vec4(vPosition.x, vPosition.y, vPosition.z, 1.0);  \n\
+    gl_Position = mM * mV * mP * vec4(vPosition.x, vPosition.y, vPosition.z, 1.0);  \n\
 	color = vColor;							\n\
 }";
 
@@ -194,6 +198,10 @@ void display(){
 
 void init()
 {
+	mM = glm::mat4(1.0f);
+	mV = glm::mat4(1.0f);
+	mP = glm::mat4(1.0f);
+
 	// Create 3 vertices that make up a triangle that fits on the viewport 
 	GLfloat vertices1[] = { -1.0f, -1.0f, 0.0f,
 			0.0f, -1.0f, 0.0f,
@@ -220,7 +228,11 @@ void init()
 	//shaderPrograms[1] = CompileShaders(pVS, pFS);
 	VAOs[1] = generateObjectBuffer(vertices2, colors2);
 	// Link the current buffer to the shader
-	linkCurrentBuffertoShader(shaderProgram1);	
+	linkCurrentBuffertoShader(shaderProgram1);
+
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mV"), 1, GL_FALSE, glm::value_ptr(mV));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mP"), 1, GL_FALSE, glm::value_ptr(mP));
 }
 
 int main(int argc, char** argv){
@@ -235,9 +247,7 @@ int main(int argc, char** argv){
 
 	// Handle keyboard pressures
 	glutKeyboardFunc(keyboardHandler);
-	glm::mat4 mM = glm::mat4(1.0);
-	glm::mat4 mV = glm::mat4(1.0);
-	glm::mat4 mP = glm::mat4(1.0);
+	
 	 // A call to glewInit() must be done after glut is initialized!
     GLenum res = glewInit();
 	// Check for any errors
