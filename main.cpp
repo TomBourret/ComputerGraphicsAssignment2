@@ -10,7 +10,7 @@
 
 using namespace std;
 
-static GLuint VAOs[2];
+static GLuint VAOs[3];
 static GLuint shaderProgram1;
 static glm::mat4 mM;
 static glm::mat4 mV;
@@ -251,7 +251,7 @@ void display(){
 
 	glClear(GL_COLOR_BUFFER_BIT);
 	glUseProgram(shaderProgram1);
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 3; i++) {
 		glBindVertexArray(VAOs[i]);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
@@ -269,12 +269,16 @@ void init()
 	perspective = false;
 	// Create 3 vertices that make up a triangle that fits on the viewport 
 	GLfloat vertices1[] = { -1.0f, -1.0f, 0.0f,
-			0.0f, -1.0f, 0.0f,
-			-0.5f, 1.0f, 0.0f
+			-0.5f, 0.0f, 0.0f,
+			0.0f, -1.0f, 0.0f
 	};
 	GLfloat vertices2[] = { 0.0f, -1.0f, 0.0f,
-			0.5f, 1.0f, 0.0f,
+			0.5f, 0.0f, 0.0f,
 			1.0f, -1.0f, 0.0f
+	};
+	GLfloat vertices3[] = { -0.5f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,
+			0.5f, 0.0f, 0.0f
 	};
 	// Create a color array that identfies the colors of each vertex (format R, G, B, A)
 	GLfloat colors1[] = { 0.0f, 1.0f, 0.0f, 1.0f,
@@ -285,13 +289,20 @@ void init()
 			0.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 1.0f, 0.0f, 1.0f
 	};
+	GLfloat color_yellow[] = { 1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 1.0f, 0.0f, 1.0f
+	};
 	// Set up the shaders
 	shaderProgram1 = CompileShaders(pVS, pFS);
 	// Put the vertices and colors into a vertex buffer object
-	VAOs[0] = generateObjectBuffer(vertices1, colors1);
+	VAOs[0] = generateObjectBuffer(vertices1, color_yellow);
 	linkCurrentBuffertoShader(shaderProgram1);
 	//shaderPrograms[1] = CompileShaders(pVS, pFS);
-	VAOs[1] = generateObjectBuffer(vertices2, colors2);
+	VAOs[1] = generateObjectBuffer(vertices2, color_yellow);
+	// Link the current buffer to the shader
+	linkCurrentBuffertoShader(shaderProgram1);
+	VAOs[2] = generateObjectBuffer(vertices3, color_yellow);
 	// Link the current buffer to the shader
 	linkCurrentBuffertoShader(shaderProgram1);
 
