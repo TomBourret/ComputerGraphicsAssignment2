@@ -209,6 +209,38 @@ void keyboardHandler(unsigned char key, int x, int y) {
 		mM = glm::translate(mM, glm::vec3(0.0f, 0.0f, -0.1f));
 		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
 		break;
+	case 'd':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'q':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 's':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'z':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(0.0f, -1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'a':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'e':
+		mM = glm::rotate(mM, glm::radians(10.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'k':
+		mM = glm::scale(mM, glm::vec3(0.5, 0.5, 0.5));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
+	case 'l':
+		mM = glm::scale(mM, glm::vec3(2.0, 2.0, 2.0));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram1, "mM"), 1, GL_FALSE, glm::value_ptr(mM));
+		break;
 	default:
 		break;
 	}
